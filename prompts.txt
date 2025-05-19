@@ -12,3 +12,6 @@
 - can you please add this folders? (gave terminal commands to create such structure with mkdir & touch)
 
 - @terminal /explain error and how to resolve same, getting this after moving index.js to src (gave me solution to update path)
+
+- @workspace can you help me with creating user model, user authentication and user profile ? (helped me get code blocks to add in files)
+- @workspace for recent changes - what package we need to install ? (it gives us code but we need to add package with npm i)
