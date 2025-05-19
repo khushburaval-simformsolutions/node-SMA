@@ -1,0 +1,6 @@
+- I'm creating social media app backend project here. Create a 'package.json' file with basic project information (name, version, description, main entry point). Use 'npm init -y' equivalent configurations.
+- Add 'express' as a project dependency (updated package.json and added express)
+- Create a main application file (created index.js with base setup)
+- @terminal run this app (gave error for missing node_modules - did npm i and worked)
+- Add a '.gitignore' file to exclude 'node_modules'
+- 
