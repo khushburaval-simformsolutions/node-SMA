@@ -3,4 +3,7 @@
 - Create a main application file (created index.js with base setup)
 - @terminal run this app (gave error for missing node_modules - did npm i and worked)
 - Add a '.gitignore' file to exclude 'node_modules'
-- 
+
+- Add 'body-parser' middleware to parse request bodies (both URL-encoded and JSON).
+- Add 'cors' middleware to handle Cross-Origin Resource Sharing (for development, you might allow all origins initially, but consider security for production).
+- Implement basic logging middleware using 'morgan' to log HTTP requests
