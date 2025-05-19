@@ -2,6 +2,7 @@
 const express = require('express');
 const { registerUser, loginUser } = require('../services/userService');
 const authMiddleware = require('../middlewares/authMiddleware');
+const User = require('../models/userModel'); // Import the User model
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
