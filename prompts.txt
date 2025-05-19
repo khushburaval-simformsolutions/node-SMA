@@ -11,3 +11,4 @@
 - For my app can you suggest folder structure as per current best practice of express app
 - can you please add this folders? (gave terminal commands to create such structure with mkdir & touch)
 
+- @terminal /explain error and how to resolve same, getting this after moving index.js to src (gave me solution to update path)
