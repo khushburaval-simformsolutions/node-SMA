@@ -7,3 +7,7 @@
 - Add 'body-parser' middleware to parse request bodies (both URL-encoded and JSON).
 - Add 'cors' middleware to handle Cross-Origin Resource Sharing (for development, you might allow all origins initially, but consider security for production).
 - Implement basic logging middleware using 'morgan' to log HTTP requests
+
+- For my app can you suggest folder structure as per current best practice of express app
+- can you please add this folders? (gave terminal commands to create such structure with mkdir & touch)
+
