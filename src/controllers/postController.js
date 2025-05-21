@@ -1,5 +1,4 @@
-
-const { createPost, getPosts, updatePost, deletePost } = require('../services/postService');
+const { createPost, getPosts, updatePost, deletePost, getPostById, getUserPosts } = require('../services/postService');
 
 const createPostHandler = async (req, res) => {
   try {
@@ -37,4 +36,29 @@ const deletePostHandler = async (req, res) => {
   }
 };
 
-module.exports = { createPostHandler, getPostsHandler, updatePostHandler, deletePostHandler };
+const getPostByIdHandler = async (req, res) => {
+  try {
+    const post = await getPostById(req.params.id);
+    res.json(post);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+const getUserPostsHandler = async (req, res) => {
+  try {
+    const posts = await getUserPosts(req.user.id);
+    res.json(posts);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+module.exports = { 
+  createPostHandler, 
+  getPostsHandler, 
+  updatePostHandler, 
+  deletePostHandler, 
+  getPostByIdHandler, 
+  getUserPostsHandler 
+};

@@ -1,8 +1,8 @@
-
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const authMiddleware = require('../middlewares/authMiddleware');
 const { createPost, getPosts, updatePost, deletePost } = require('../services/postService');
+const { getPostByIdHandler, getUserPostsHandler } = require('../controllers/postController');
 
 const router = express.Router();
 
@@ -29,6 +29,22 @@ router.get('/', authMiddleware, async (req, res) => {
   try {
     const posts = await getPosts();
     res.json(posts);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.get('/:id', authMiddleware, async (req, res) => {
+  try {
+    await getPostByIdHandler(req, res);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.get('/user/posts', authMiddleware, async (req, res) => {
+  try {
+    await getUserPostsHandler(req, res);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

@@ -20,3 +20,5 @@
 - Can you add update user profile feature for authenticated user , also validate input data
 
 - Consider my project structure src/ help me add new files and code block for creating and managing posts for my social media app project
+
+- consider project structure /src - can you add new features to post module like - get single post by id, get user specific posts

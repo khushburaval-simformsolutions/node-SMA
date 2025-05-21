@@ -1,4 +1,3 @@
-
 // src/services/postService.js
 const Post = require('../models/postModel');
 
@@ -27,4 +26,21 @@ const deletePost = async (postId, userId) => {
   return post;
 };
 
-module.exports = { createPost, getPosts, updatePost, deletePost };
+const getPostById = async (postId) => {
+  const post = await Post.findById(postId).populate('user', 'username');
+  if (!post) throw new Error('Post not found');
+  return post;
+};
+
+const getUserPosts = async (userId) => {
+  return await Post.find({ user: userId }).populate('user', 'username').sort({ createdAt: -1 });
+};
+
+module.exports = { 
+  createPost, 
+  getPosts, 
+  updatePost, 
+  deletePost, 
+  getPostById, 
+  getUserPosts 
+};
