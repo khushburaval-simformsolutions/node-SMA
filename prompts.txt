@@ -19,3 +19,4 @@
 - Add nodemon for auto reload (gave line to add in package.json & cmd to install same)
 - Can you add update user profile feature for authenticated user , also validate input data
 
+- Consider my project structure src/ help me add new files and code block for creating and managing posts for my social media app project
