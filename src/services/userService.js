@@ -21,4 +21,17 @@ const loginUser = async (email, password) => {
   return { user, token };
 };
 
-module.exports = { registerUser, loginUser };
+const updateUserProfile = async (userId, profileData) => {
+  const { username, email, profile } = profileData;
+
+  const updateFields = {};
+  if (username) updateFields.username = username;
+  if (email) updateFields.email = email;
+  if (profile) updateFields.profile = profile;
+
+  const updatedUser = await User.findByIdAndUpdate(userId, updateFields, { new: true }).select('-password');
+  if (!updatedUser) throw new Error('User not found');
+  return updatedUser;
+};
+
+module.exports = { registerUser, loginUser, updateUserProfile };
