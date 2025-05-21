@@ -22,3 +22,6 @@
 - Consider my project structure src/ help me add new files and code block for creating and managing posts for my social media app project
 
 - consider project structure /src - can you add new features to post module like - get single post by id, get user specific posts
+
+- create a new module as follows - followerId, followingId such that duplicate does not happen , apis to follow and unfollow user, get followers and followings
+
