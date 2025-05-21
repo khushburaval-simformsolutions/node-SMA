@@ -5,6 +5,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
+const followerRoutes = require('./routes/followerRoutes');
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(morgan('dev'));
 
 app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
+app.use('/api/followers', followerRoutes);
 
 app.use((req, res) => {
   res.status(404).send('404 Not Found');
