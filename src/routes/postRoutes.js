@@ -1,7 +1,7 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const authMiddleware = require('../middlewares/authMiddleware');
-const { createPost, getPosts, updatePost, deletePost } = require('../services/postService');
+const { createPost, getPosts, updatePost, deletePost, generateFeed } = require('../services/postService');
 const { getPostByIdHandler, getUserPostsHandler } = require('../controllers/postController');
 
 const router = express.Router();
@@ -34,19 +34,21 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 });
 
-router.get('/:id', authMiddleware, async (req, res) => {
-  try {
-    await getPostByIdHandler(req, res);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
 router.get('/user/posts', authMiddleware, async (req, res) => {
   try {
     await getUserPostsHandler(req, res);
   } catch (err) {
     res.status(400).json({ error: err.message });
+  }
+});
+
+router.get('/feed', authMiddleware, async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+    const feed = await generateFeed(req.user.id, page, limit);
+    res.json(feed);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -68,6 +70,14 @@ router.put(
     }
   }
 );
+
+router.get('/:id', authMiddleware, async (req, res) => {
+  try {
+    await getPostByIdHandler(req, res);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
 
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
