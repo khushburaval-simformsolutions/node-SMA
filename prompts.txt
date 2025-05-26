@@ -25,3 +25,4 @@
 
 - create a new module as follows - followerId, followingId such that duplicate does not happen , apis to follow and unfollow user, get followers and followings
 
+- @workspace Consider my project workspace /src and help me create live comments feature - implement web socket , consider authentication, error handling & best practise to develop same
