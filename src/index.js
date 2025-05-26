@@ -1,17 +1,13 @@
 const app = require('./app');
 const connectDB = require('./config/db');
 const http = require('http');
-const { Server } = require('socket.io');
+const { initSocket } = require('./sockets/socket');
 const commentsSocket = require('./sockets/commentsSocket');
 
 connectDB();
 
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: '*', // Allow all origins for development; restrict in production
-  },
-});
+const io = initSocket(server);
 
 // Initialize WebSocket logic
 commentsSocket(io);

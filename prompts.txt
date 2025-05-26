@@ -25,4 +25,7 @@
 
 - create a new module as follows - followerId, followingId such that duplicate does not happen , apis to follow and unfollow user, get followers and followings
 
-- @workspace Consider my project workspace /src and help me create live comments feature - implement web socket , consider authentication, error handling & best practise to develop same
+- @workspace Consider my project workspace /src and help me create live comments feature - implement web socket , consider authentication, error handling & best practice to develop same
+
+- I can see now comments been added, so when we call api and add comment - listner does not get notified. So flow should be like this right - to call an api that saves post and emits event for listners
+- Do require updates to commentSocket file
