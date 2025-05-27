@@ -17,10 +17,37 @@ const commentSchema = new mongoose.Schema({
 });
 
 const postSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  content: { type: String, required: true },
-  likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  user: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User', 
+    required: true 
+  },
+  content: { 
+    type: String, 
+    required: true 
+  },
+  mediaUrl: String,
+  topics: [String],
+  hashtags: [String],
+  likes: [{ 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User' 
+  }],
+  likesCount: {
+    type: Number,
+    default: 0
+  },
   comments: [commentSchema],
+  trendingScore: {
+    type: Number,
+    default: 0
+  }
 }, { timestamps: true });
 
+// Update trending score before saving
+postSchema.pre('save', function(next) {
+  const hoursAge = (Date.now() - this.createdAt) / (1000 * 60 * 60);
+  this.trendingScore = (this.likesCount + this.comments.length) / (hoursAge + 1);
+  next();
+});
 module.exports = mongoose.model('Post', postSchema);

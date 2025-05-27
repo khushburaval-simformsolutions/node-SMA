@@ -31,3 +31,6 @@
 - Do require updates to commentSocket file
 
 - @workspace Implement the ephemeral stories feature where user-uploaded media (images/videos) are visible for 24 hours, create a background job that runs and deletes expired stories
+
+- @workspace Implement customizable feeds that allow users to create and manage personalized streams of content based on specific criteria (e.g., followed users, interests, topics)
+- How to add such posts to get in given pref feed (got post model updates to work with feed preference)

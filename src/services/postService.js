@@ -2,11 +2,6 @@
 const Post = require('../models/postModel');
 const Follower = require('../models/followerModel');
 
-const createPost = async (userId, content) => {
-  const post = new Post({ user: userId, content });
-  return await post.save();
-};
-
 const getPosts = async () => {
   return await Post.find().populate('user', 'username').sort({ createdAt: -1 });
 };
@@ -60,6 +55,36 @@ const generateFeed = async (userId, page = 1, limit = 10) => {
     totalPages: Math.ceil(totalPosts / limit),
     totalPosts,
   };
+};
+
+const extractTopicsAndHashtags = (content) => {
+  const hashtags = (content.match(/#[\w]+/g) || [])
+    .map(tag => tag.substring(1).toLowerCase());
+  
+  // Extract topics from content (simplified)
+  const topics = [...new Set([
+    ...hashtags,
+    ...content.split(/\s+/)
+      .filter(word => word.length > 3)
+      .map(word => word.toLowerCase())
+  ])];
+
+  return { topics, hashtags };
+};
+
+const createPost = async (userId, content, mediaUrl = null) => {
+  const { topics, hashtags } = extractTopicsAndHashtags(content);
+  
+  const post = new Post({
+    user: userId,
+    content,
+    mediaUrl,
+    topics,
+    hashtags,
+    likesCount: 0
+  });
+
+  return await post.save();
 };
 
 module.exports = { 

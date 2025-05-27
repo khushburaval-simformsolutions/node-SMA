@@ -6,18 +6,22 @@ const { getPostByIdHandler, getUserPostsHandler } = require('../controllers/post
 
 const router = express.Router();
 
-router.post(
-  '/',
+router.post('/', 
   authMiddleware,
-  [body('content').notEmpty().withMessage('Content is required')],
+  [
+    body('content').notEmpty().withMessage('Content is required'),
+    body('mediaUrl').optional().isURL()
+  ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     try {
-      const post = await createPost(req.user.id, req.body.content);
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const { content, mediaUrl } = req.body;
+      const post = await createPost(req.user.id, content, mediaUrl);
+      
       res.status(201).json(post);
     } catch (err) {
       res.status(400).json({ error: err.message });

@@ -8,6 +8,7 @@ const postRoutes = require('./routes/postRoutes');
 const followerRoutes = require('./routes/followerRoutes');
 const commentRoutes = require('./routes/commentRoutes');
 const storyRoutes = require('./routes/storyRoutes');
+const feedRoutes = require('./routes/feedRoutes');
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use('/api/posts', postRoutes);
 app.use('/api/followers', followerRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/stories', storyRoutes);
+app.use('/api/feeds', feedRoutes);
 
 app.use((req, res) => {
   res.status(404).send('404 Not Found');
