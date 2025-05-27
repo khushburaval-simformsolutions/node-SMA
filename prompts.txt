@@ -29,3 +29,5 @@
 
 - I can see now comments been added, so when we call api and add comment - listner does not get notified. So flow should be like this right - to call an api that saves post and emits event for listners
 - Do require updates to commentSocket file
+
+- @workspace Implement the ephemeral stories feature where user-uploaded media (images/videos) are visible for 24 hours, create a background job that runs and deletes expired stories
