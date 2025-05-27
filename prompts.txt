@@ -34,3 +34,5 @@
 
 - @workspace Implement customizable feeds that allow users to create and manage personalized streams of content based on specific criteria (e.g., followed users, interests, topics)
 - How to add such posts to get in given pref feed (got post model updates to work with feed preference)
+
+- @workspace Do we have any need of utils folder ? (Gave suggestions to put on util files with code)
