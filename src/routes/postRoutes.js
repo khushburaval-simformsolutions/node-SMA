@@ -3,6 +3,7 @@ const { body, validationResult } = require('express-validator');
 const authMiddleware = require('../middlewares/authMiddleware');
 const { createPost, getPosts, updatePost, deletePost, generateFeed } = require('../services/postService');
 const { getPostByIdHandler, getUserPostsHandler } = require('../controllers/postController');
+const { extractHashtags } = require('../utils/hashtagExtractor');
 
 const router = express.Router();
 
@@ -87,6 +88,52 @@ router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const post = await deletePost(req.params.id, req.user.id);
     res.json({ message: 'Post deleted successfully', post });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.get('/search', authMiddleware, async (req, res) => {
+  try {
+    const { query } = req.query;
+    const hashtags = extractHashtags(query);
+    
+    const posts = await Post.find({
+      $or: [
+        { hashtags: { $in: hashtags } },
+        { content: { $regex: query, $options: 'i' } }
+      ]
+    })
+    .populate('user', 'username')
+    .sort({ createdAt: -1 });
+
+    res.json(posts);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.get('/trending/hashtags', async (req, res) => {
+  try {
+    const posts = await Post.aggregate([
+      { $unwind: '$hashtags' },
+      {
+        $group: {
+          _id: '$hashtags',
+          count: { $sum: 1 },
+          latestUse: { $max: '$createdAt' }
+        }
+      },
+      {
+        $sort: {
+          count: -1,
+          latestUse: -1
+        }
+      },
+      { $limit: 10 }
+    ]);
+
+    res.json(posts);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

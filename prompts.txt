@@ -36,3 +36,8 @@
 - How to add such posts to get in given pref feed (got post model updates to work with feed preference)
 
 - @workspace Do we have any need of utils folder ? (Gave suggestions to put on util files with code)
+
+- @workspace do we need this logger file ? and if so how to use it ?
+
+- @workspace can you use this utility wherever needed ? (hashtag extractor)
+- @workspace where to use created 2 new methods getDefaultFeed & getTrendingTopics?

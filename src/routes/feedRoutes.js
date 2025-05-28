@@ -94,4 +94,30 @@ router.delete('/:preferenceId', authMiddleware, async (req, res) => {
   }
 });
 
+// Get default feed (no preferences)
+router.get('/default', authMiddleware, async (req, res) => {
+  try {
+    const { page, limit } = req.query;
+    const feed = await feedService.getDefaultFeed(
+      req.user.id,
+      parseInt(page),
+      parseInt(limit)
+    );
+    res.json(feed);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Get trending topics
+router.get('/trending/topics', authMiddleware, async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 10;
+    const topics = await feedService.getTrendingTopics(limit);
+    res.json(topics);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 module.exports = router;
