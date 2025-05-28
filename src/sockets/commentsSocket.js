@@ -2,6 +2,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const commentService = require('../services/commentService');
+const logger = require('../utils/logger');
 
 const commentsSocket = (io) => {
   // Authentication middleware
@@ -19,7 +20,10 @@ const commentsSocket = (io) => {
   });
 
   io.on('connection', (socket) => {
-    console.log(`User connected: ${socket.user.id}`);
+    logger.info('New socket connection', { 
+      userId: socket.user?.id,
+      socketId: socket.id 
+    });
 
     // Track user's active rooms
     socket.activeRooms = new Set();
@@ -31,7 +35,11 @@ const commentsSocket = (io) => {
       }
       socket.join(postId);
       socket.activeRooms.add(postId);
-      console.log(`User ${socket.user.id} joined post ${postId}`);
+      logger.debug('User joined post room', {
+        userId: socket.user?.id,
+        postId,
+        socketId: socket.id
+      });
     });
 
     // Leave a post's room

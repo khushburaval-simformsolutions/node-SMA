@@ -2,9 +2,14 @@
 const Post = require('../models/postModel');
 const FeedPreference = require('../models/feedPreferenceModel');
 const Follower = require('../models/followerModel');
+const logger = require('../utils/logger');
 
 const feedService = {
   async createFeedPreference(userId, preferenceData) {
+    logger.info('Creating new feed preference', { 
+      userId, 
+      preferenceName: preferenceData.name 
+    });
     const preference = new FeedPreference({
       user: userId,
       ...preferenceData
