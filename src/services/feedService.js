@@ -45,7 +45,14 @@ const feedService = {
   async getCustomFeed(userId, preferenceId, page = 1, limit = 10) {
     const preference = await FeedPreference.findById(preferenceId);
     const query = {};
-
+    // Add media filter if mediaOnly is true
+    if (preference.filters.mediaOnly) {
+      query.mediaUrl = { $ne: null };
+      // Optionally filter by media type
+      if (preference.filters.mediaType) {
+        query.mediaType = preference.filters.mediaType;
+      }
+    }
     // Apply topic and hashtag filters
     if (preference.filters?.topics?.length > 0) {
       const topicHashtags = preference.filters.topics

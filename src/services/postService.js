@@ -2,6 +2,7 @@
 const Post = require('../models/postModel');
 const Follower = require('../models/followerModel');
 const { extractHashtags, extractTopics } = require('../utils/hashtagExtractor');
+const { isValidMediaUrl, getMediaType } = require('../utils/mediaHandler');
 
 const getPosts = async () => {
   return await Post.find().populate('user', 'username').sort({ createdAt: -1 });
@@ -63,6 +64,17 @@ const generateFeed = async (userId, page = 1, limit = 10) => {
 };
 
 const createPost = async (userId, content, mediaUrl = null) => {
+   // Validate media URL if provided
+   if (mediaUrl) {
+    if (!isValidMediaUrl(mediaUrl)) {
+      throw new Error('Invalid media URL');
+    }
+    const mediaType = getMediaType(mediaUrl);
+    if (!mediaType) {
+      throw new Error('Unsupported media type');
+    }
+  }
+
   // Extract hashtags and topics from content
   const hashtags = extractHashtags(content);
   const topics = extractTopics(content);
@@ -71,6 +83,7 @@ const createPost = async (userId, content, mediaUrl = null) => {
     user: userId,
     content,
     mediaUrl,
+    mediaType: mediaUrl ? getMediaType(mediaUrl) : null,
     hashtags,
     topics,  // Store both hashtags and topics
     likesCount: 0

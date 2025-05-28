@@ -4,6 +4,7 @@ const authMiddleware = require('../middlewares/authMiddleware');
 const { createPost, getPosts, updatePost, deletePost, generateFeed } = require('../services/postService');
 const { getPostByIdHandler, getUserPostsHandler } = require('../controllers/postController');
 const { extractHashtags } = require('../utils/hashtagExtractor');
+const { isValidMediaUrl } = require('../utils/mediaHandler');
 
 const router = express.Router();
 
@@ -11,8 +12,15 @@ router.post('/',
   authMiddleware,
   [
     body('content').notEmpty().withMessage('Content is required'),
-    body('mediaUrl').optional().isURL()
-  ],
+    body('mediaUrl')
+    .optional()
+    .custom((value) => {
+      if (value && !isValidMediaUrl(value)) {
+        throw new Error('Invalid media URL');
+      }
+      return true;
+    })
+],
   async (req, res) => {
     try {
       const errors = validationResult(req);

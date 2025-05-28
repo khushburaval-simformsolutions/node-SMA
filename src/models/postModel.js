@@ -27,6 +27,11 @@ const postSchema = new mongoose.Schema({
     required: true 
   },
   mediaUrl: String,
+  mediaType: {
+    type: String,
+    enum: ['image', 'video', null],
+    default: null
+  },
   topics: [String],
   hashtags: [String],
   likes: [{ 

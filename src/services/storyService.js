@@ -1,10 +1,24 @@
 const Story = require('../models/storyModel');
 const { scheduleJob } = require('node-schedule');
+const { isValidMediaUrl, getMediaType } = require('../utils/mediaHandler');
 
 const storyService = {
   async createStory(userId, mediaUrl, mediaType) {
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours from now
-    
+    // Validate media URL
+    if (!isValidMediaUrl(mediaUrl)) {
+      throw new Error('Invalid media URL');
+    }
+
+    // Validate media type
+    const detectedType = getMediaType(mediaUrl);
+    if (!detectedType) {
+      throw new Error('Unsupported media type');
+    }
+    if (detectedType !== mediaType) {
+      throw new Error('Media type does not match URL extension');
+    }
+
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
     const story = new Story({
       user: userId,
       mediaUrl,
