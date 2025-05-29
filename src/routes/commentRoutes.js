@@ -33,8 +33,13 @@ router.post("/:postId", authMiddleware, async (req, res) => {
 
 router.get("/:postId", async (req, res) => {
   try {
-    const comments = await commentService.getComments(req.params.postId);
-    res.json(comments);
+    const { page = 1, limit = 10 } = req.query;
+    const paginatedComments = await commentService.getComments(
+      req.params.postId,
+      parseInt(page),
+      parseInt(limit)
+    );
+    res.json(paginatedComments);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

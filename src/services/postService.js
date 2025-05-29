@@ -3,9 +3,20 @@ const Post = require('../models/postModel');
 const Follower = require('../models/followerModel');
 const { extractHashtags, extractTopics } = require('../utils/hashtagExtractor');
 const { isValidMediaUrl, getMediaType } = require('../utils/mediaHandler');
+const { paginateResults, createPaginationResponse } = require('../utils/pagination');
 
-const getPosts = async () => {
-  return await Post.find().populate('user', 'username').sort({ createdAt: -1 });
+const getPosts = async (page = 1, limit = 10) => {
+  const { skip, limit: limitParsed } = paginateResults(page, limit);
+  
+  const posts = await Post.find()
+    .populate('user', 'username')
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limitParsed);
+
+  const total = await Post.countDocuments();
+  
+  return createPaginationResponse(posts, total, page, limit);
 };
 
 const updatePost = async (postId, userId, content) => {
@@ -39,28 +50,21 @@ const getUserPosts = async (userId) => {
 };
 
 const generateFeed = async (userId, page = 1, limit = 10) => {
-  // Find users the current user is following
-  const following = await Follower.find({ followerId: userId }).select('followingId');
+  const { skip, limit: limitParsed } = paginateResults(page, limit);
+  
+  const following = await Follower.find({ followerId: userId });
   const followingIds = following.map(f => f.followingId);
-
-  // Include the current user's posts in the feed
   followingIds.push(userId);
 
-  // Fetch posts from the followed users in reverse chronological order
   const posts = await Post.find({ user: { $in: followingIds } })
-    .sort({ createdAt: -1 }) // Sort by newest first
-    .skip((page - 1) * limit) // Skip posts for pagination
-    .limit(parseInt(limit)); // Limit the number of posts
+    .populate('user', 'username')
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limitParsed);
 
-  // Count total posts for pagination metadata
-  const totalPosts = await Post.countDocuments({ user: { $in: followingIds } });
-
-  return {
-    posts,
-    currentPage: parseInt(page),
-    totalPages: Math.ceil(totalPosts / limit),
-    totalPosts,
-  };
+  const total = await Post.countDocuments({ user: { $in: followingIds } });
+  
+  return createPaginationResponse(posts, total, page, limit);
 };
 
 const createPost = async (userId, content, mediaUrl = null) => {

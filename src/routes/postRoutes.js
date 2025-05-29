@@ -40,8 +40,9 @@ router.post('/',
 
 router.get('/', authMiddleware, async (req, res) => {
   try {
-    const posts = await getPosts();
-    res.json(posts);
+    const { page = 1, limit = 10 } = req.query;
+    const paginatedPosts = await getPosts(parseInt(page), parseInt(limit));
+    res.json(paginatedPosts);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -58,8 +59,12 @@ router.get('/user/posts', authMiddleware, async (req, res) => {
 router.get('/feed', authMiddleware, async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
-    const feed = await generateFeed(req.user.id, page, limit);
-    res.json(feed);
+    const paginatedFeed = await generateFeed(
+      req.user.id,
+      parseInt(page),
+      parseInt(limit)
+    );
+    res.json(paginatedFeed);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

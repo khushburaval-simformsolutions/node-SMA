@@ -37,17 +37,30 @@ const commentService = {
     }
   },
 
-  async getComments(postId) {
-    console.log(`Fetching comments for post ${postId}`);
+  async getComments(postId, page = 1, limit = 10) {
+    const { skip, limit: limitParsed } = paginateResults(page, limit);
     
     const post = await Post.findById(postId)
-      .populate('comments.user', 'username');
-    
+      .populate({
+        path: 'comments.user',
+        select: 'username',
+        options: {
+          skip: skip,
+          limit: limitParsed,
+          sort: { createdAt: -1 }
+        }
+      });
+
     if (!post) {
       throw new Error(`Post not found with id: ${postId}`);
     }
 
-    return post.comments || [];
+    return createPaginationResponse(
+      post.comments || [], 
+      post.comments.length,
+      page,
+      limit
+    );
   }
 };
 
