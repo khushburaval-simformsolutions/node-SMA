@@ -47,3 +47,5 @@
 - @workspace can you utilize this pagination service ?
 
 - @workspace can you update code to use response handler ?
+
+- @workspace utilize validators service as required

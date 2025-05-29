@@ -2,9 +2,19 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
+const { isValidEmail, isValidUsername } = require('../utils/validators');
 
 const registerUser = async (userData) => {
   const { username, email, password } = userData;
+  
+  if (!isValidEmail(email)) {
+    throw new Error('Invalid email format');
+  }
+  
+  if (!isValidUsername(username)) {
+    throw new Error('Username must be 3-20 characters and contain only letters, numbers, and underscores');
+  }
+
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = new User({ username, email, password: hashedPassword });
   return await user.save();
@@ -23,6 +33,14 @@ const loginUser = async (email, password) => {
 
 const updateUserProfile = async (userId, profileData) => {
   const { username, email, profile } = profileData;
+
+  if (email && !isValidEmail(email)) {
+    throw new Error('Invalid email format');
+  }
+
+  if (username && !isValidUsername(username)) {
+    throw new Error('Invalid username format');
+  }
 
   const updateFields = {};
   if (username) updateFields.username = username;

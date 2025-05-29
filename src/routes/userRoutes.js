@@ -1,23 +1,54 @@
 // src/routes/userRoutes.js
-const express = require('express');
-const { registerUser, loginUser, updateUserProfile } = require('../services/userService');
-const authMiddleware = require('../middlewares/authMiddleware');
-const User = require('../models/userModel'); // Import the User model
-const { body, validationResult } = require('express-validator');
-const { successResponse, errorResponse } = require('../utils/responseHandler');
+const express = require("express");
+const {
+  registerUser,
+  loginUser,
+  updateUserProfile,
+} = require("../services/userService");
+const authMiddleware = require("../middlewares/authMiddleware");
+const User = require("../models/userModel"); // Import the User model
+const { body, validationResult } = require("express-validator");
+const { successResponse, errorResponse } = require("../utils/responseHandler");
+const { isValidEmail, isValidUsername } = require("../utils/validators");
 
 const router = express.Router();
 
-router.post('/register', async (req, res) => {
-  try {
-    const user = await registerUser(req.body);
-    return successResponse(res, user, 201);
-  } catch (err) {
-    return errorResponse(res, err);
+router.post(
+  "/register",
+  [
+    body("email").custom((email) => {
+      if (!isValidEmail(email)) {
+        throw new Error("Invalid email format");
+      }
+      return true;
+    }),
+    body("username").custom((username) => {
+      if (!isValidUsername(username)) {
+        throw new Error(
+          "Username must be 3-20 characters and contain only letters, numbers, and underscores"
+        );
+      }
+      return true;
+    }),
+    body("password")
+      .isLength({ min: 6 })
+      .withMessage("Password must be at least 6 characters long"),
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return errorResponse(res, { errors: errors.array() });
+      }
+      const user = await registerUser(req.body);
+      return successResponse(res, user, 201);
+    } catch (err) {
+      return errorResponse(res, err);
+    }
   }
-});
+);
 
-router.post('/login', async (req, res) => {
+router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     const { user, token } = await loginUser(email, password);
@@ -27,9 +58,9 @@ router.post('/login', async (req, res) => {
   }
 });
 
-router.get('/profile', authMiddleware, async (req, res) => {
+router.get("/profile", authMiddleware, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    const user = await User.findById(req.user.id).select("-password");
     res.json(user);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -37,25 +68,38 @@ router.get('/profile', authMiddleware, async (req, res) => {
 });
 
 router.put(
-  '/profile',
+  "/profile",
   authMiddleware,
   [
-    body('username').optional().isString().withMessage('Username must be a string'),
-    body('email').optional().isEmail().withMessage('Invalid email format'),
-    body('profile.bio').optional().isString().withMessage('Bio must be a string'),
-    body('profile.avatar').optional().isURL().withMessage('Avatar must be a valid URL'),
+    body("email")
+      .optional()
+      .custom((email) => {
+        if (!isValidEmail(email)) {
+          throw new Error("Invalid email format");
+        }
+        return true;
+      }),
+    body("username")
+      .optional()
+      .custom((username) => {
+        if (!isValidUsername(username)) {
+          throw new Error(
+            "Username must be 3-20 characters and contain only letters, numbers, and underscores"
+          );
+        }
+        return true;
+      }),
   ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return errorResponse(res, { errors: errors.array() });
+      }
       const updatedUser = await updateUserProfile(req.user.id, req.body);
-      res.json({ message: 'Profile updated successfully', user: updatedUser });
+      return successResponse(res, updatedUser);
     } catch (err) {
-      res.status(400).json({ error: err.message });
+      return errorResponse(res, err);
     }
   }
 );
