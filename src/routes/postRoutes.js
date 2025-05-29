@@ -5,6 +5,7 @@ const { createPost, getPosts, updatePost, deletePost, generateFeed } = require('
 const { getPostByIdHandler, getUserPostsHandler } = require('../controllers/postController');
 const { extractHashtags } = require('../utils/hashtagExtractor');
 const { isValidMediaUrl } = require('../utils/mediaHandler');
+const { successResponse, errorResponse } = require('../utils/responseHandler');
 
 const router = express.Router();
 
@@ -25,18 +26,16 @@ router.post('/',
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return errorResponse(res, { errors: errors.array() });
       }
-
+  
       const { content, mediaUrl } = req.body;
       const post = await createPost(req.user.id, content, mediaUrl);
-      
-      res.status(201).json(post);
+      return successResponse(res, post, 201);
     } catch (err) {
-      res.status(400).json({ error: err.message });
+      return errorResponse(res, err);
     }
-  }
-);
+  });
 
 router.get('/', authMiddleware, async (req, res) => {
   try {
@@ -59,14 +58,10 @@ router.get('/user/posts', authMiddleware, async (req, res) => {
 router.get('/feed', authMiddleware, async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
-    const paginatedFeed = await generateFeed(
-      req.user.id,
-      parseInt(page),
-      parseInt(limit)
-    );
-    res.json(paginatedFeed);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
+    const paginatedFeed = await generateFeed(req.user.id, parseInt(page), parseInt(limit));
+    return successResponse(res, paginatedFeed);
+  } catch (err) {
+    return errorResponse(res, err);
   }
 });
 

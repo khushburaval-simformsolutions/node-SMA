@@ -4,6 +4,8 @@ const router = express.Router();
 const commentService = require("../services/commentService");
 const authMiddleware = require("../middlewares/authMiddleware");
 const { getIO } = require("../sockets/socket");
+const { successResponse, errorResponse } = require('../utils/responseHandler');
+
 router.post("/:postId", authMiddleware, async (req, res) => {
   try {
     // Save comment
@@ -24,10 +26,9 @@ router.post("/:postId", authMiddleware, async (req, res) => {
         },
       },
     });
-
-    res.status(201).json(comment);
+    return successResponse(res, comment, 201);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    return errorResponse(res, err);
   }
 });
 

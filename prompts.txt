@@ -45,3 +45,5 @@
 - @workspace how and where to use media handler ?
 
 - @workspace can you utilize this pagination service ?
+
+- @workspace can you update code to use response handler ?

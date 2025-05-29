@@ -4,14 +4,16 @@ const { registerUser, loginUser, updateUserProfile } = require('../services/user
 const authMiddleware = require('../middlewares/authMiddleware');
 const User = require('../models/userModel'); // Import the User model
 const { body, validationResult } = require('express-validator');
+const { successResponse, errorResponse } = require('../utils/responseHandler');
+
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
   try {
     const user = await registerUser(req.body);
-    res.status(201).json(user);
+    return successResponse(res, user, 201);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    return errorResponse(res, err);
   }
 });
 
@@ -19,9 +21,9 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     const { user, token } = await loginUser(email, password);
-    res.json({ user, token });
+    return successResponse(res, { user, token });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    return errorResponse(res, err);
   }
 });
 

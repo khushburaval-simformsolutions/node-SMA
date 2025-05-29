@@ -4,6 +4,7 @@ const router = express.Router();
 const feedService = require('../services/feedService');
 const authMiddleware = require('../middlewares/authMiddleware');
 const { body, validationResult } = require('express-validator');
+const { successResponse, errorResponse } = require('../utils/responseHandler');
 
 // Create new feed preference
 router.post('/', 
@@ -17,16 +18,16 @@ router.post('/',
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return errorResponse(res, { errors: errors.array() });
       }
 
       const preference = await feedService.createFeedPreference(
         req.user.id,
         req.body
       );
-      res.status(201).json(preference);
+      return successResponse(res, preference, 201);
     } catch (err) {
-      res.status(400).json({ error: err.message });
+      return errorResponse(res, err);
     }
   }
 );
@@ -88,9 +89,9 @@ router.put('/:preferenceId',
 router.delete('/:preferenceId', authMiddleware, async (req, res) => {
   try {
     await feedService.deleteFeedPreference(req.user.id, req.params.preferenceId);
-    res.json({ message: 'Feed preference deleted successfully' });
+    return successResponse(res, { message: 'Feed preference deleted successfully' });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    return errorResponse(res, err);
   }
 });
 
