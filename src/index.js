@@ -4,6 +4,7 @@ const http = require('http');
 const { initSocket } = require('./sockets/socket');
 const commentsSocket = require('./sockets/commentsSocket');
 const storyService = require('./services/storyService');
+const config = require('./config/config');
 
 connectDB();
 
@@ -14,6 +15,6 @@ const io = initSocket(server);
 commentsSocket(io);
 storyService.scheduleCleanup();
 
-server.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000');
+server.listen(config.port, () => {
+  console.log(`Server is running on http://localhost:${config.port}`);
 });

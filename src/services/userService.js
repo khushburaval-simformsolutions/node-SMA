@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const { isValidEmail, isValidUsername } = require('../utils/validators');
+const config = require('../config/config');
 
 const registerUser = async (userData) => {
   const { username, email, password } = userData;
@@ -27,7 +28,7 @@ const loginUser = async (email, password) => {
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) throw new Error('Invalid credentials');
 
-  const token = jwt.sign({ id: user._id }, 'your_jwt_secret', { expiresIn: '1h' });
+  const token = jwt.sign({ id: user._id }, config.jwtSecret, { expiresIn: '1h' });
   return { user, token };
 };
 

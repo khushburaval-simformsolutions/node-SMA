@@ -1,6 +1,7 @@
 // src/middlewares/authMiddleware.js
 const jwt = require('jsonwebtoken');
 const logger = require('../utils/logger');
+const config = require('../config/config');
 
 const authMiddleware = (req, res, next) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
@@ -13,7 +14,7 @@ const authMiddleware = (req, res, next) => {
   }
 
   try {
-    const verified = jwt.verify(token, 'your_jwt_secret');
+    const verified = jwt.verify(token, config.jwtSecret);
     req.user = verified;
     next();
   } catch (err) {

@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const commentService = require('../services/commentService');
 const logger = require('../utils/logger');
+const config = require('../config/config');
 
 const commentsSocket = (io) => {
   // Authentication middleware
@@ -11,7 +12,7 @@ const commentsSocket = (io) => {
     if (!token) return next(new Error('Authentication error'));
 
     try {
-      const decoded = jwt.verify(token, 'your_jwt_secret');
+      const decoded = jwt.verify(token, config.jwtSecret);
       socket.user = decoded;
       next();
     } catch (err) {

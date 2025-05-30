@@ -49,3 +49,6 @@
 - @workspace can you update code to use response handler ?
 
 - @workspace utilize validators service as required
+
+- @workspace considering system design principals what changes we can make to our project for betterment ?
+- How to create swagger.js documents
