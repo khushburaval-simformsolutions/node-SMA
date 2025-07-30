@@ -1,4 +1,3 @@
-// src/services/feedService.js
 const Post = require("../models/postModel");
 const FeedPreference = require("../models/feedPreferenceModel");
 const Follower = require("../models/followerModel");
@@ -123,12 +122,13 @@ const feedService = {
       .skip(skip)
       .limit(limitParsed);
 
-    const totalPosts = await Post.countDocuments({
+    const total = await Post.countDocuments({
       user: { $in: followingIds },
     });
 
     return createPaginationResponse(posts, total, page, limit);
   },
+
 };
 
 module.exports = feedService;

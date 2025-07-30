@@ -1,4 +1,3 @@
-// src/models/feedPreferenceModel.js
 const mongoose = require('mongoose');
 
 const feedPreferenceSchema = new mongoose.Schema({

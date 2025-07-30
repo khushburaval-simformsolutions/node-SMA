@@ -1,4 +1,3 @@
-// src/middlewares/authMiddleware.js
 const jwt = require('jsonwebtoken');
 const logger = require('../utils/logger');
 const config = require('../config/config');

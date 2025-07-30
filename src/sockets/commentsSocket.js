@@ -1,4 +1,3 @@
-// src/sockets/commentsSocket.js
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const commentService = require('../services/commentService');

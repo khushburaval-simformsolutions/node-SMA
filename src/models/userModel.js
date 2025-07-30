@@ -1,4 +1,3 @@
-// src/models/userModel.js
 const mongoose = require('mongoose');
 const { isValidEmail, isValidUsername } = require("../utils/validators");
 

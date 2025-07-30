@@ -1,124 +1,41 @@
-// src/routes/feedRoutes.js
 const express = require('express');
 const router = express.Router();
-const feedService = require('../services/feedService');
 const authMiddleware = require('../middlewares/authMiddleware');
-const { body, validationResult } = require('express-validator');
-const { successResponse, errorResponse } = require('../utils/responseHandler');
+const { body } = require('express-validator');
+const {
+  createFeedPreferenceHandler,
+  getCustomFeedHandler,
+  getUserPreferencesHandler,
+  updateFeedPreferenceHandler,
+  deleteFeedPreferenceHandler,
+  getDefaultFeedHandler,
+  getTrendingTopicsHandler,
+  searchFeedHandler,
+  getTrendingHashtagsHandler
+} = require('../controllers/feedController');
 
-// Create new feed preference
-router.post('/', 
-  authMiddleware,
-  [
-    body('name').notEmpty().withMessage('Feed name is required'),
-    body('filters').optional().isObject(),
-    body('sortBy').optional().isIn(['recent', 'popular', 'trending'])
-  ],
-  async (req, res) => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return errorResponse(res, { errors: errors.array() });
-      }
+// Validation middleware
+const createFeedValidation = [
+  body('name').notEmpty().withMessage('Feed name is required'),
+  body('filters').optional().isObject(),
+  body('sortBy').optional().isIn(['recent', 'popular', 'trending'])
+];
 
-      const preference = await feedService.createFeedPreference(
-        req.user.id,
-        req.body
-      );
-      return successResponse(res, preference, 201);
-    } catch (err) {
-      return errorResponse(res, err);
-    }
-  }
-);
+const updateFeedValidation = [
+  body('name').optional().notEmpty(),
+  body('filters').optional().isObject(),
+  body('sortBy').optional().isIn(['recent', 'popular', 'trending'])
+];
 
-// Get custom feed based on preference
-router.get('/:preferenceId', authMiddleware, async (req, res) => {
-  try {
-    const { page, limit } = req.query;
-    const feed = await feedService.getCustomFeed(
-      req.user.id,
-      req.params.preferenceId,
-      page,
-      limit
-    );
-    res.json(feed);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
-// Get all feed preferences for user
-router.get('/', authMiddleware, async (req, res) => {
-  try {
-    const preferences = await feedService.getUserFeedPreferences(req.user.id);
-    res.json(preferences);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
-// Update feed preference
-router.put('/:preferenceId',
-  authMiddleware,
-  [
-    body('name').optional().notEmpty(),
-    body('filters').optional().isObject(),
-    body('sortBy').optional().isIn(['recent', 'popular', 'trending'])
-  ],
-  async (req, res) => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
-
-      const preference = await feedService.updateFeedPreference(
-        req.user.id,
-        req.params.preferenceId,
-        req.body
-      );
-      res.json(preference);
-    } catch (err) {
-      res.status(400).json({ error: err.message });
-    }
-  }
-);
-
-// Delete feed preference
-router.delete('/:preferenceId', authMiddleware, async (req, res) => {
-  try {
-    await feedService.deleteFeedPreference(req.user.id, req.params.preferenceId);
-    return successResponse(res, { message: 'Feed preference deleted successfully' });
-  } catch (err) {
-    return errorResponse(res, err);
-  }
-});
-
-// Get default feed (no preferences)
-router.get('/default', authMiddleware, async (req, res) => {
-  try {
-    const { page, limit } = req.query;
-    const feed = await feedService.getDefaultFeed(
-      req.user.id,
-      parseInt(page),
-      parseInt(limit)
-    );
-    res.json(feed);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
-// Get trending topics
-router.get('/trending/topics', authMiddleware, async (req, res) => {
-  try {
-    const limit = parseInt(req.query.limit) || 10;
-    const topics = await feedService.getTrendingTopics(limit);
-    res.json(topics);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
+// Routes
+router.post('/', authMiddleware, createFeedValidation, createFeedPreferenceHandler);
+router.get('/', authMiddleware, getUserPreferencesHandler);
+router.get('/:preferenceId', authMiddleware, getCustomFeedHandler);
+router.put('/:preferenceId', authMiddleware, updateFeedValidation, updateFeedPreferenceHandler);
+router.delete('/:preferenceId', authMiddleware, deleteFeedPreferenceHandler);
+router.get('/default', authMiddleware, getDefaultFeedHandler);
+router.get('/search', authMiddleware, searchFeedHandler);
+router.get('/trending/topics', authMiddleware, getTrendingTopicsHandler);
+router.get('/trending/hashtags', authMiddleware, getTrendingHashtagsHandler);
 
 module.exports = router;

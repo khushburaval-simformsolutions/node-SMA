@@ -1,4 +1,3 @@
-// src/services/postService.js
 const Post = require('../models/postModel');
 const Follower = require('../models/followerModel');
 const { extractHashtags, extractTopics } = require('../utils/hashtagExtractor');
@@ -49,24 +48,6 @@ const getUserPosts = async (userId) => {
   return await Post.find({ user: userId }).populate('user', 'username').sort({ createdAt: -1 });
 };
 
-const generateFeed = async (userId, page = 1, limit = 10) => {
-  const { skip, limit: limitParsed } = paginateResults(page, limit);
-  
-  const following = await Follower.find({ followerId: userId });
-  const followingIds = following.map(f => f.followingId);
-  followingIds.push(userId);
-
-  const posts = await Post.find({ user: { $in: followingIds } })
-    .populate('user', 'username')
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limitParsed);
-
-  const total = await Post.countDocuments({ user: { $in: followingIds } });
-  
-  return createPaginationResponse(posts, total, page, limit);
-};
-
 const createPost = async (userId, content, mediaUrl = null) => {
    // Validate media URL if provided
    if (mediaUrl) {
@@ -102,6 +83,5 @@ module.exports = {
   updatePost, 
   deletePost, 
   getPostById, 
-  getUserPosts, 
-  generateFeed
+  getUserPosts
 };

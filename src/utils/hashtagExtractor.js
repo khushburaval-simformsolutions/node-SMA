@@ -1,4 +1,3 @@
-// src/utils/hashtagExtractor.js
 const extractHashtags = (content) => {
   const hashtags = (content.match(/#[\w]+/g) || [])
     .map(tag => tag.substring(1).toLowerCase());

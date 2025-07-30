@@ -1,4 +1,3 @@
-// src/docs/swagger.js
 const swaggerJsdoc = require('swagger-jsdoc');
 
 const options = {
@@ -10,7 +9,7 @@ const options = {
       description: 'API documentation for Social Media Application',
       contact: {
         name: 'API Support',
-        email: 'support@example.com'
+        email: 'support@sma.com'
       }
     },
     servers: [

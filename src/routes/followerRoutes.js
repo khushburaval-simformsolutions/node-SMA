@@ -1,43 +1,23 @@
-
 const express = require('express');
-const authMiddleware = require('../middlewares/authMiddleware');
-const { followUserHandler, unfollowUserHandler, getFollowersHandler, getFollowingsHandler } = require('../controllers/followerController');
-const { successResponse, errorResponse } = require('../utils/responseHandler');
-
 const router = express.Router();
+const authMiddleware = require('../middlewares/authMiddleware');
+const { 
+  followUserHandler, 
+  unfollowUserHandler, 
+  getFollowersHandler, 
+  getFollowingsHandler 
+} = require('../controllers/followerController');
 
-router.post('/follow/:id', authMiddleware, async (req, res) => {
-  try {
-    const result = await followUser(req.user.id, req.params.id);
-    return successResponse(res, result, 201);
-  } catch (err) {
-    return errorResponse(res, err);
-  }
-});
+// Follow a user
+router.post('/follow/:id', authMiddleware, followUserHandler);
 
-router.delete('/unfollow/:id', authMiddleware, async (req, res) => {
-  try {
-    await unfollowUserHandler(req, res);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
+// Unfollow a user
+router.delete('/unfollow/:id', authMiddleware, unfollowUserHandler);
 
-router.get('/:id/followers', authMiddleware, async (req, res) => {
-  try {
-    const followers = await getFollowers(req.params.id);
-    return successResponse(res, followers);
-  } catch (err) {
-    return errorResponse(res, err);
-  }
-});
+// Get user's followers
+router.get('/:id/followers', authMiddleware, getFollowersHandler);
 
-router.get('/:id/followings', authMiddleware, async (req, res) => {
-  try {
-    await getFollowingsHandler(req, res);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
+// Get user's followings
+router.get('/:id/followings', authMiddleware, getFollowingsHandler);
 
 module.exports = router;

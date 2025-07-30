@@ -1,4 +1,3 @@
-// src/utils/mediaHandler.js
 const isValidMediaUrl = (url) => {
   try {
     new URL(url);

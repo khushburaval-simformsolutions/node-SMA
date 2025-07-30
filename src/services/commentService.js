@@ -1,5 +1,5 @@
-// src/services/commentService.js
 const Post = require('../models/postModel');
+const { paginateResults, createPaginationResponse } = require('../utils/pagination');
 
 const commentService = {
   async addComment(postId, userId, text) {
