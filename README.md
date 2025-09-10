@@ -30,11 +30,9 @@ Before setting up the project, ensure you have the following installed:
 
 ## Setup Instructions
 1. Clone the repository
-    git clone <repository-url>
-    cd Node-SMA
-2. Install dependencies
-    npm install
+
+2. Install dependencies : npm install
+
 3. Set up and run MongoDB
 
-4. Run project
-    npm start
+4. Run project with : npm start
