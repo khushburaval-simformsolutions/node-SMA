@@ -95,26 +95,6 @@ const getTrendingTopicsHandler = async (req, res) => {
   }
 };
 
-const searchFeedHandler = async (req, res) => {
-  try {
-    const { query } = req.query;
-    const hashtags = extractHashtags(query);
-    const posts = await feedService.searchPosts(query, hashtags);
-    return successResponse(res, posts);
-  } catch (err) {
-    return errorResponse(res, err);
-  }
-};
-
-const getTrendingHashtagsHandler = async (req, res) => {
-  try {
-    const hashtags = await feedService.getTrendingHashtags();
-    return successResponse(res, hashtags);
-  } catch (err) {
-    return errorResponse(res, err);
-  }
-};
-
 module.exports = {
   createFeedPreferenceHandler,
   getCustomFeedHandler,
@@ -122,7 +102,5 @@ module.exports = {
   updateFeedPreferenceHandler,
   deleteFeedPreferenceHandler,
   getDefaultFeedHandler,
-  getTrendingTopicsHandler,
-  searchFeedHandler,
-  getTrendingHashtagsHandler
+  getTrendingTopicsHandler
 };

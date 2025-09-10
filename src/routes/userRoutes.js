@@ -6,7 +6,8 @@ const {
   registerHandler,
   loginHandler,
   getProfileHandler,
-  updateProfileHandler
+  updateProfileHandler,
+  deleteProfileHandler
 } = require('../controllers/userController');
 
 const router = express.Router();
@@ -52,5 +53,6 @@ router.post('/register', registerValidation, registerHandler);
 router.post('/login', loginHandler);
 router.get('/profile', authMiddleware, getProfileHandler);
 router.put('/profile', authMiddleware, updateProfileValidation, updateProfileHandler);
+router.delete('/profile', authMiddleware, deleteProfileHandler);
 
 module.exports = router;

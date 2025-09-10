@@ -1,6 +1,7 @@
 const Story = require('../models/storyModel');
 const { scheduleJob } = require('node-schedule');
 const { isValidMediaUrl, getMediaType } = require('../utils/mediaHandler');
+const mongoose = require('mongoose');
 
 const storyService = {
   async createStory(userId, mediaUrl, mediaType) {
@@ -28,8 +29,12 @@ const storyService = {
 
     return await story.save();
   },
-
-  async getStoriesByUserId(userId) {
+    
+   async getStoriesByUserId(userId) {
+    if (!mongoose.isValidObjectId(userId)) {
+      throw new Error('Invalid user ID');
+    }
+  
     return await Story.find({
       user: userId,
       expiresAt: { $gt: new Date() }

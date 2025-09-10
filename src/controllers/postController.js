@@ -6,6 +6,7 @@ const {
   getPostById,
   getUserPosts,
 } = require("../services/postService");
+const { validationResult } = require('express-validator');
 const { successResponse, errorResponse } = require("../utils/responseHandler");
 
 const createPostHandler = async (req, res) => {

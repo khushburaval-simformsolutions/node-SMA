@@ -10,8 +10,6 @@ const {
   deleteFeedPreferenceHandler,
   getDefaultFeedHandler,
   getTrendingTopicsHandler,
-  searchFeedHandler,
-  getTrendingHashtagsHandler
 } = require('../controllers/feedController');
 
 // Validation middleware
@@ -27,15 +25,16 @@ const updateFeedValidation = [
   body('sortBy').optional().isIn(['recent', 'popular', 'trending'])
 ];
 
+
 // Routes
+router.get('/default', authMiddleware, getDefaultFeedHandler);
+
 router.post('/', authMiddleware, createFeedValidation, createFeedPreferenceHandler);
 router.get('/', authMiddleware, getUserPreferencesHandler);
 router.get('/:preferenceId', authMiddleware, getCustomFeedHandler);
 router.put('/:preferenceId', authMiddleware, updateFeedValidation, updateFeedPreferenceHandler);
 router.delete('/:preferenceId', authMiddleware, deleteFeedPreferenceHandler);
-router.get('/default', authMiddleware, getDefaultFeedHandler);
-router.get('/search', authMiddleware, searchFeedHandler);
+
 router.get('/trending/topics', authMiddleware, getTrendingTopicsHandler);
-router.get('/trending/hashtags', authMiddleware, getTrendingHashtagsHandler);
 
 module.exports = router;

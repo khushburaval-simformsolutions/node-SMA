@@ -3,6 +3,10 @@ const FeedPreference = require("../models/feedPreferenceModel");
 const Follower = require("../models/followerModel");
 const logger = require("../utils/logger");
 const { extractHashtags, extractTopics } = require("../utils/hashtagExtractor");
+const {
+  paginateResults,
+  createPaginationResponse,
+} = require("../utils/pagination");
 
 const feedService = {
   async createFeedPreference(userId, preferenceData) {
@@ -108,7 +112,7 @@ const feedService = {
 
   async getDefaultFeed(userId, page = 1, limit = 10) {
     const { skip, limit: limitParsed } = paginateResults(page, limit);
-    
+
     // Get posts from followed users without specific preferences
     const following = await Follower.find({ followerId: userId }).select(
       "followingId"
@@ -127,8 +131,7 @@ const feedService = {
     });
 
     return createPaginationResponse(posts, total, page, limit);
-  },
-
+  }
 };
 
 module.exports = feedService;

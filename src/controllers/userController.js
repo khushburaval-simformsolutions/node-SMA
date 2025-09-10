@@ -1,4 +1,4 @@
-const { registerUser, loginUser, updateUserProfile } = require('../services/userService');
+const { registerUser, loginUser, updateUserProfile, deleteUserProfile, getUserProfile } = require('../services/userService');
 const User = require('../models/userModel');
 const { validationResult } = require('express-validator');
 const { successResponse, errorResponse } = require('../utils/responseHandler');
@@ -28,10 +28,11 @@ const loginHandler = async (req, res) => {
 
 const getProfileHandler = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
-    return successResponse(res, user);
-  } catch (err) {
-    return errorResponse(res, err);
+    const userId = req.user.id;
+    const user = await getUserProfile(userId);
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
   }
 };
 
@@ -48,9 +49,19 @@ const updateProfileHandler = async (req, res) => {
   }
 };
 
+const deleteProfileHandler = async (req, res) => {
+  try {
+    const deletedUser = await deleteUserProfile(req.user.id);
+    return successResponse(res, { message: 'User profile deleted successfully', user: deletedUser });
+  } catch (err) {
+    return errorResponse(res, err);
+  }
+};
+
 module.exports = {
   registerHandler,
   loginHandler,
   getProfileHandler,
-  updateProfileHandler
+  updateProfileHandler,
+  deleteProfileHandler
 };

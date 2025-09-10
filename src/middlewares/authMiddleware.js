@@ -19,7 +19,7 @@ const authMiddleware = (req, res, next) => {
   } catch (err) {
     logger.error('Auth middleware error', {
       path: req.path,
-      error: error.message
+      error: err.message
     });
     res.status(400).send('Invalid Token');
   }

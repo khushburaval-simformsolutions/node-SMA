@@ -27,7 +27,7 @@ const loginUser = async (email, password) => {
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) throw new Error('Invalid credentials');
 
-  const token = jwt.sign({ id: user._id }, config.jwtSecret, { expiresIn: '1h' });
+  const token = jwt.sign({ id: user._id }, config.jwtSecret, { expiresIn: '4h' });
   return { user, token };
 };
 
@@ -52,4 +52,16 @@ const updateUserProfile = async (userId, profileData) => {
   return updatedUser;
 };
 
-module.exports = { registerUser, loginUser, updateUserProfile };
+const deleteUserProfile = async (userId) => {
+  const deletedUser = await User.findByIdAndDelete(userId);
+  if (!deletedUser) throw new Error('User not found');
+  return deletedUser;
+};
+
+const getUserProfile = async (userId) => {
+  const user = await User.findById(userId).select('-password');
+  if (!user) throw new Error('User not found');
+  return user;
+};
+
+module.exports = { registerUser, loginUser, updateUserProfile, deleteUserProfile, getUserProfile };
